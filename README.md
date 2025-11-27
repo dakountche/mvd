@@ -1,4 +1,4 @@
-# Minimum Viable Dataspace Demo
+# Eclipse Minimum Viable Dataspace on Kubernetes
 
 <!-- TOC -->
 
@@ -11,50 +11,41 @@
         * [3.2 Data setup](#32-data-setup)
         * [3.3 Access control](#33-access-control)
         * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-    * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-        * [4.1 Start NGINX](#41-start-nginx)
-        * [4.2 Starting the runtimes](#42-starting-the-runtimes)
-        * [4.3 Seeding the dataspace](#43-seeding-the-dataspace)
-        * [4.4 Next steps](#44-next-steps)
-    * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
-        * [5.1 Build the runtime images](#51-build-the-runtime-images)
-        * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
-        * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-        * [5.4 JVM crashes with `SIGILL` on ARM platforms](#54-jvm-crashes-with-sigill-on-arm-platforms)
-        * [5.5 Debugging MVD in Kubernetes](#55-debugging-mvd-in-kubernetes)
-    * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
-        * [6.1 In-memory databases](#61-in-memory-databases)
-        * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
-        * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
-    * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
-        * [7.1 Get the catalog](#71-get-the-catalog)
-        * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
-        * [7.3 Query negotiation status](#73-query-negotiation-status)
-        * [7.4 Initiate data transfer](#74-initiate-data-transfer)
-        * [7.5 Query data transfers](#75-query-data-transfers)
-        * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
-        * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
-        * [7.8 Fetch data](#78-fetch-data)
-    * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
-        * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
-        * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
-        * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
-        * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
-            * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
-            * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-        * [8.5 Super-user seeding](#85-super-user-seeding)
-    * [9. Advanced topics](#9-advanced-topics)
-        * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
-        * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
-            * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
-            * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
-    * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
-        * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
-        * [10.2 DID resolution](#102-did-resolution)
-            * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
-            * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
-        * [10.3 Credential Issuance](#103-credential-issuance)
-        * [10.4 Default scope-to-criterion transformer](#104-default-scope-to-criterion-transformer)
+    * [4. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+        * [4.1 Build the runtime images](#51-build-the-runtime-images)
+        * [4.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+        * [4.3 Seed the dataspace](#53-seed-the-dataspace)
+        * [4.4 JVM crashes with `SIGILL` on ARM platforms](#54-jvm-crashes-with-sigill-on-arm-platforms)
+        * [4.5 Debugging MVD in Kubernetes](#55-debugging-mvd-in-kubernetes)
+    * [5. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+        * [5.1 Get the catalog](#71-get-the-catalog)
+        * [5.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
+        * [5.3 Query negotiation status](#73-query-negotiation-status)
+        * [5.4 Initiate data transfer](#74-initiate-data-transfer)
+        * [5.5 Query data transfers](#75-query-data-transfers)
+        * [5.6 Get EndpointDataReference](#76-get-endpointdatareference)
+        * [5.7 Get access token for EDR](#77-get-access-token-for-edr)
+        * [5.8 Fetch data](#78-fetch-data)
+    * [6. Custom extensions in MVD](#8-custom-extensions-in-mvd)
+        * [6.1 Catalog Node Resolver](#81-catalog-node-resolver)
+        * [6.2 Default scope mapping function](#82-default-scope-mapping-function)
+        * [6.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
+        * [6.4 Policy evaluation functions](#84-policy-evaluation-functions)
+            * [6.4.1 Membership evaluation function](#841-membership-evaluation-function)
+            * [6.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
+        * [6.5 Super-user seeding](#85-super-user-seeding)
+    * [7. Advanced topics](#9-advanced-topics)
+        * [7.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
+        * [7.2 Regenerating participant keys](#92-regenerating-participant-keys)
+            * [7.2.1 IntelliJ deployment:](#921-intellij-deployment)
+            * [7.2.2 Kubernetes deployment](#922-kubernetes-deployment)
+    * [8. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
+        * [8.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
+        * [8.2 DID resolution](#102-did-resolution)
+            * [8.2.1 `did:web` for participants](#1021-didweb-for-participants)
+            * [8.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
+        * [8.3 Credential Issuance](#103-credential-issuance)
+        * [8.4 Default scope-to-criterion transformer](#104-default-scope-to-criterion-transformer)
 
 <!-- TOC -->
 
@@ -85,40 +76,6 @@ assumptions were made that are potentially invalid in other scenarios.
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
 demonstrate how DCP works to an otherwise unassuming audience.
 
-### 2.1 Version stability and backwards compatibility guarantees
-
-It is important to understand that while we _do_ tag the git tree at certain times, the intention there is to provide
-stable builds for adopters and to avoid randomly breaking builds. MVD releases simply use _release_ versions of upstream
-components, as opposed to the `main` branch, which uses `-SNAPSHOT` versions. The latter case can occasionally lead to
-breaking builds.
-
-However, all of our development work in MVD targets the `main` branch. In other words, we do not backport bugfixes to
-older releases of MVD. If there is a bug or a new feature either in one of the upstream components or MVD, fixes will
-_always_ target `main` and will surface in one of the upcoming MVD releases.
-
-This is yet another reason why MVD should _never_ be used in production scenarios!
-
-Please also note that MVD does not publish any artifacts (Maven, Docker images, ...), adopters have to build from
-source.
-
-TL;DR - there are none. This is a _sample_ project, not a commercial product.
-
-### 2.2 Which version should I use?
-
-The repo's default branch is `main`, which serves as development branch and is checked out by default. If you don't do
-anything, then you'll get the absolute latest version of MVD. This is suitable for anyone who is okay with pulling
-frequently and with the occasional breakage. The upshot is that this branch will always contain the latest features and
-fixes of all upstream components.
-
-> We have monitoring systems im place that inform us about broken builds. No need to raise issues about this.
-
-More conservative developers may fall back
-to [releases of MVD](https://github.com/eclipse-edc/MinimumViableDataspace/releases) that use release versions of all
-upstream components. If this is you, then don't forget to check out the appropriate tag after cloning the repo.
-
-Either download the ZIP file and use sources therein, or check out the corresponding tag.
-
-An MVD release version is typically created shortly after a release of the upstream components was released.
 
 ## 3. The Scenario
 
@@ -241,106 +198,15 @@ Kubernetes, since the URLs are different. As a consequence, for every Verifiable
 that contains the "localhost" DID and one that contains the DID with the Kubernetes service URL. Also, the participant
 lists are different between those two.
 
-## 4. Running the demo (inside IntelliJ)
 
-> Please note that due to the way how Windows handles file paths, running the IntelliJ Run Configs on Windows can
-> sometimes cause problems. We recommend either running this from within WSL or on a Linux machine. Alternatively, paths
-> could be corrected manually. Running MVD natively on Windows is not supported!
-
-There are several run configurations for IntelliJ in the `.run/` folder. One each for the consumer and provider
-connectors runtimes and IdentityHub runtimes plus one for the provider catalog server, and one named "dataspace". The
-latter is a compound run config an brings up all other runtimes together.
-
-### 4.1 Start NGINX
-
-The issuer's DID document is hosted on NGINX, so the easiest way of running NGINX is with a docker container:
-
-```shell
-docker run -d --name nginx -p 9876:80 --rm \
-  -v "$PWD"/deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro \
-  -v "$PWD"/deployment/assets/issuer/did.docker.json:/var/www/.well-known/did.json:ro \
-  nginx
-```
-
-To verify that it worked, please execute `curl -X GET http://localhost:9876/.well-known/did.json` and see if it returns
-a
-DID document as JSON structure:
-
-```json
-{
-  "service": [],
-  "verificationMethod": [
-    {
-      "id": "did:web:localhost%3A9876#key-1",
-      "type": "JsonWebKey2020",
-      "controller": "did:web:localhost%3A9876",
-      "publicKeyMultibase": null,
-      "publicKeyJwk": {
-        "kty": "OKP",
-        "crv": "Ed25519",
-        "x": "Hsq2QXPbbsU7j6JwXstbpxGSgliI04g_fU3z2nwkuVc"
-      }
-    }
-  ],
-  "authentication": [
-    "key-1"
-  ],
-  "id": "did:web:localhost%3A9876",
-  "@context": [
-    "https://www.w3.org/ns/did/v1",
-    {
-      "@base": "did:web:localhost%3A9876"
-    }
-  ]
-}
-```
-
-The port mapping is **important**, because it influences the DID of the issuer: with a host port of
-`9876` the issuer DID resolves to `did:web:localhost%3A9876`. Changing the port mapping changes the DID, soif you change
-the port mapping, be sure to execute a search-and-replace!
-
-Naturally, you are free to install NGINX natively on your computer or use any other webserver altogether, but this won't
-be supported by us.
-
-### 4.2 Starting the runtimes
-
-The connector runtimes contain both the controlplane and the dataplane. Note that in a real-world scenario those would
-likely be separate runtimes to be able to scale and deploy them individually. Note also, that the Kubernetes deployment
-(next chapter) does indeed run them as separate pods.
-
-The run configs use the `temurin-22` JDK. If you don't have it installed already, you can choose to install it (IntelliJ
-makes this really easy), or to select whatever JDK you have available in each run config.
-
-All run configs take their configuration from `*.env` files which are located in `deployment/assets/env`.
-
-### 4.3 Seeding the dataspace
-
-DID documents are dynamically generated when "seeding" the data, specifically when creating the `ParticipantContext`
-objects in IdentityHub. This is automatically being done by a script `seed.sh`.
-
-After executing the `dataspace` run config in Intellij, be sure to **execute the `seed.sh` script after all the runtimes
-have started**. Omitting to do so will leave the dataspace in an uninitialized state and cause all
-connector-to-connector communication to fail.
-
-### 4.4 Next steps
-
-All REST requests made from the script are available in the [Postman
-collection](./deployment/postman/MVD.postman_collection.json). With the [HTTP
-Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [Import from Postman
-Collections](https://plugins.jetbrains.com/plugin/22438-import-from-postman-collections) plugins, the Postman collection
-can be imported and then executed by means of the [environment file](./deployment/postman/http-client.env.json),
-selecting the "Local" environment.
-
-Please read [chapter 7](#7-executing-rest-requests-using-postman) for details.
-
-## 5. Running the Demo (Kubernetes)
+## 4. Deployment on Kubernetes 
 
 For this section a basic understanding of Kubernetes, Docker, Gradle and Terraform is required. It is assumed that the
 following tools are installed and readily available:
 
 - Docker
-- KinD (other cluster engines may work as well - not tested!)
-- Terraform
+- A Kubernetes cluster
+- OpenTofu
 - JDK 17+
 - Git
 - a POSIX compliant shell
@@ -354,7 +220,7 @@ All commands are executed from the **repository's root folder** unless stated ot
 > Since this is not a production deployment, all applications are deployed _in the same cluster_ and in the same
 > namespace, plainly for the sake of simplicity.
 
-### 5.1 Build the runtime images
+### 4.1 Build the runtime images
 
 ```shell
 ./gradlew build
@@ -369,7 +235,7 @@ puts the HashiCorp Vault module and PostgreSQL persistence modules on the runtim
 
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Terraform scripts.
 
-### 5.2 Create the K8S cluster
+### 4.2 Create the K8S cluster
 
 After the runtime images are built, we bring up and configure the Kubernetes cluster. We are using KinD here, but this
 should work similarly well on other cluster runtimes, such as MicroK8s, K3s or Minikube. Please refer to the respective
@@ -426,7 +292,7 @@ expected. If pods _don't_ come up after a reasonable amount of time, it is time 
 
 Remote Debugging is possible, but Kubernetes port-forwards are necessary.
 
-### 5.3 Seed the dataspace
+### 4.3 Seed the dataspace
 
 Once all the deployments are up-and-running, the seed script needs to be executed which should produce command line
 output similar to this:
@@ -460,7 +326,7 @@ _the `node` warnings are harmless and can be ignored_
 > communication to fail.
 >
 
-### 5.4 JVM crashes with `SIGILL` on ARM platforms
+### 4.4 JVM crashes with `SIGILL` on ARM platforms
 
 We have noticed, that the JVM inside the Docker container sometimes crashes with a `SIGILL` signal right
 away without even starting the runtime. So far we've only seen this on ARM platforms such as Apple Silicon. The `UseSVE`
@@ -477,7 +343,7 @@ Extensions that are available on ARM processors. Alternatively, you can also set
 
 _Important note: on non-ARM platforms, the `-XX:UseSVE=0` VM option is not recognized and will crash the JVM!_
 
-### 5.5 Debugging MVD in Kubernetes
+### 4.5 Debugging MVD in Kubernetes
 
 All of MVD's runtime images come with remote JVM debugging enabled by default. This is configured by setting an
 environment variable
@@ -506,44 +372,7 @@ classpath. Those are generally located in the `launchers/` directory.
 Please also refer to the [official IntelliJ tutorial](https://www.jetbrains.com/help/idea/tutorial-remote-debug.html) on
 how to do remote debugging.
 
-## 6. Differences between Kubernetes and IntelliJ
-
-The focus with the Kubernetes deployment is to achieve a "one-click-deployment" (don't count them, it's more than 1)
-with minimum hassle for people who don't necessarily have developer tools installed on their computers. Conversely, the
-deployment with IntelliJ is intended to give developers an easy way to debug and trace the code base, and to extend and
-play with MVD without having to do the entire rebuild-docker-image-redeploy loop every time. Also, debugging is much
-easier.
-
-However, to keep the IntelliJ setup as simple as possible, a few shortcuts were taken:
-
-### 6.1 In-memory databases
-
-No persistent storage is available, because that would have meant manually setting up and
-populating several PostgreSQL databases. Everytime a runtime (re-)starts, it starts with a clean slate. This can cause
-some inconsistencies, e.g. when consumer and provider have negotiated a contract, and the provider restarts, the
-contract will be missing from its database. Keep that in mind. It is recommended to always restart the _entire_
-dataspace with the included composite run config.
-
-### 6.2 Memory-based secret vaults
-
-This is the big one. Since the memory-vault is compiled into the runtime, components of one
-participant (e.g. controlplane and identityhub) _do not share_ vault secrets, because their vaults are different. Thus,
-all secrets that need to be accessed by multiple components must be pre-populated.
-
-### 6.3 Embedded vs Remote STS
-
-While in the Kubernetes deployment the SecureTokenService (S)S is a stand-alone component, in the IntelliJ
-deployment it is embedded into the controlplane. The reason for this is, that during seeding a participant context and
-an STS Account is created. This includes a (generated) client secret, that gets stored in the vault.
-
-In the IntelliJ case that vault is purely in-memory and is isolated in IdentityHub, with no way to access it from the
-connector's controlplane. So the connector's controlplane and IdentityHub physically cannot share any secrets. To
-overcome this, STS is simply embedded in the controlplane directly.
-
-In the Kubernetes deployment this limitation goes away, because a dedicated vault service (HashiCorp Vault) is used,
-which is accessible from either component.
-
-## 7. Executing REST requests using Postman
+## 6. Executing REST requests using Postman
 
 This demo comes with a Postman collection located in `deployment/postman`. Be aware that the collection has different
 sets of variables in different environments, "MVD local development" and "MVD K8S". These are located in the same
@@ -554,7 +383,7 @@ execute a data transfer.
 
 The following sequence must be observed:
 
-### 7.1 Get the catalog
+### 6.1 Get the catalog
 
 to get the dataspace catalog across all participants, execute `ControlPlane Management/Get Cached Catalog`. Note that it
 takes a few seconds for the consumer connector to collect all entries. Watch out for a dataset entry named `asset-1`
@@ -608,7 +437,7 @@ service entry should be:
 
 Important: copy the `@id` value of the `odrl:hasPolicy`, we'll need that to initiate the negotiation!
 
-### 7.2 Initiate the contract negotiation
+### 6.2 Initiate the contract negotiation
 
 From the previous step we have the `odrl:hasPolicy.@id` value, that should look something like
 `bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4`. This value must now be copied
@@ -627,7 +456,7 @@ into the `policy.@id` field of the `ControlPlane Management/Initiate Negotiation
 You will receive a response immediately, but that only means that the request has been received. In order to get the
 current status of the negotiation, we'll have to inquire periodically.
 
-### 7.3 Query negotiation status
+### 6.3 Query negotiation status
 
 With the `ControlPlane Management/Get Contract Negotiations` request we can periodically query the status of all our
 contract negotiations. Once the state shows `FINALIZED`, we copy the value of the `contractAgreementId`:
@@ -641,7 +470,7 @@ contract negotiations. Once the state shows `FINALIZED`, we copy the value of th
 }
 ```
 
-### 7.4 Initiate data transfer
+### 6.4 Initiate data transfer
 
 From the previous step we have the `contractAgreementId` value `3fb08a81-62b4-46fb-9a40-c574ec437759`. In the
 `ControlPlane Management/Initiate Transfer` request we will paste that into the `contractId` field:
@@ -658,7 +487,7 @@ From the previous step we have the `contractAgreementId` value `3fb08a81-62b4-46
 }
 ```
 
-### 7.5 Query data transfers
+### 6.5 Query data transfers
 
 Like with contract negotiations, data transfers are asynchronous processes so we need to periodically query their status
 using the `ControlPlane Management/Get transfer processes` request. Once we find a `"state": "STARTED"` field in the
@@ -669,7 +498,7 @@ dataplane's public endpoint, as we would query any other REST API. However, an a
 the request. This access token is provided to the consumer in the form of an EndpointDataReference (EDR). We must thus
 query the consumer's EDR endpoint to obtain the token.
 
-### 7.6 Get EndpointDataReference
+### 6.6 Get EndpointDataReference
 
 Using the `ControlPlane Management/Get Cached EDRs` request, we fetch the EDR and note down the value of the `@id`
 field, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identical to the value of the
@@ -677,7 +506,7 @@ field, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identi
 
 With that value, we can obtain the access token for this particular EDR.
 
-### 7.7 Get access token for EDR
+### 6.7 Get access token for EDR
 
 In the `ControlPlane Management/Get EDR DataAddress for TransferId` request we have to paste the `transferProcessId`
 value from the previous step in the URL path, for example:
@@ -702,7 +531,7 @@ authorization token:
 
 Note that the token was abbreviated for legibility.
 
-### 7.8 Fetch data
+### 6.8 Fetch data
 
 Using the endpoint and the authorization token from the previous step, we can then download data using the `ControlPlane
 Management/Download Data from Public API` request. To do that, the token must be copied into the request's
@@ -712,7 +541,7 @@ Important: do not prepend a `bearer` prefix!
 
 This will return some dummy JSON data.
 
-## 8. Custom extensions in MVD
+## 7. Custom extensions in MVD
 
 EDC is not a turn-key application, rather it is a set of modules, that have to be configured, customized and extended to
 fit the needs of any particular dataspace.
@@ -720,7 +549,7 @@ fit the needs of any particular dataspace.
 For our demo dataspace there are a several extensions that are required. These can generally be found in the
 `extensions/` directory, or directly in the `src/main/java` folder of the launcher module.
 
-### 8.1 Catalog Node Resolver
+### 7.1 Catalog Node Resolver
 
 Out-of-the-box the FederatedCatalog comes with an in-memory implementation of the `TargetNodeDirectory`. A
 `TargetNodeDirectory` is a high-level list of participants of the dataspace, a "phone book" if you will. In MVD that
@@ -733,7 +562,7 @@ for those participant directory files.
 
 Everything we need such as DSP URLs, public keys, CredentialService URLs is resolved from the DID document.
 
-### 8.2 Default scope mapping function
+### 7.2 Default scope mapping function
 
 As per our [dataspace rules](#33-access-control), every DSP request has to be secured by presenting the Membership
 credential, even the Catalog request. In detail, this means, that every DSP request that the consumer sends, must carry
@@ -745,7 +574,7 @@ We achieve this by intercepting the DSP request and adding the correct scope - h
 registering a `postValidator` function for the relevant policy scopes, check out the
 [DcpPatchExtension.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/core/DcpPatchExtension.java) class.
 
-### 8.3 Scope extractor for `DataProcessor` credentials
+### 7.3 Scope extractor for `DataProcessor` credentials
 
 When the consumer wants to negotiate a contract for an offer, that has a `DataAccess.level` constraint, it must add the
 relevant scope string to the access token upon DSP egress. A policy, that requires the consumer to present a
@@ -772,20 +601,20 @@ The
 class would convert this into a scope string `org.eclipse.edc.vc.type:DataProcessorCredential:read` and add it to the
 consumer's access token.
 
-### 8.4 Policy evaluation functions
+### 7.4 Policy evaluation functions
 
 Being able to express a constraint in ODRL gets us only halfway there, we also need some code to evaluate that
 expression. In EDC, we do this by registering policy evaluation functions with the policy engine.
 
 Since our dataspace defines two credential types, which can be used in policies, we also need two evaluation functions.
 
-#### 8.4.1 Membership evaluation function
+#### 7.4.1 Membership evaluation function
 
 This function is used to evaluate Membership constraints in policies by asserting that the Membership credential is
 present, is not expired and the membership is in force. This is implemented in the
 [MembershipCredentialEvaluationFunction.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/policy/MembershipCredentialEvaluationFunction.java).
 
-#### 8.4.2 DataAccessLevel evaluation function
+#### 7.4.2 DataAccessLevel evaluation function
 
 Similarly, to evaluate `DataAccess.level` constraints, there is a
 [DataAccessLevelFunction.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/policy/DataAccessLevelFunction.java)
@@ -795,7 +624,7 @@ DataProcessor VC.
 
 > Hint: all credentials, where the `credentialSubject` has the same shape/schema can be evaluated by the same function!
 
-### 8.5 Super-user seeding
+### 7.5 Super-user seeding
 
 IdentityHub's [Identity
 API](https://github.com/eclipse-edc/IdentityHub/blob/main/docs/developer/architecture/identityhub-apis.md#identity-api)
@@ -811,9 +640,9 @@ defaults and customize your "super-user" and find out what breaks :)
 
 > NB: doing this in anything but a demo installation is **not** recommended, as it poses significant security risks!
 
-## 9. Advanced topics
+## 8. Advanced topics
 
-### 9.1 Regenerating issuer keys
+### 8.1 Regenerating issuer keys
 
 The dataspace issuer is the authoritative entity that can issue Verifiable Credentials to participants. For that, two
 things are needed: a private/public key pair to sign credentials, and a DID document for verifiers to obtain the
@@ -842,42 +671,19 @@ The only thing left to do is to clean-rebuild-restart the applications (IntelliJ
 > We strongly encourage readers to closely inspect the `JwtSigner` code, because it shows how key conversion, document
 > handling etc. can be done in EDC!
 
-### 9.2 Regenerating participant keys
-
-#### 9.2.1 IntelliJ deployment:
-
-keys must be seeded at startup time (due to [this limitation](#62-memory-based-secret-vaults)).
-In addition, if consumer and provider have the same key, that makes things a bit easier, because it removes the need to
-seed the keys via config or commandline argument. That said, the process is similar to the dataspace issuer:
-
-```shell
-openssl genpkey -algorithm ed25519 -out deployment/assets/consumer_private.pem
-openssl pkey -in deployment/assets/consumer_private.pem -pubout -out deployment/assets/consumer_public.pem
-
-# use the same key for provider:
-cp  deployment/assets/consumer_private.pem  deployment/assets/provider_private.pem
-cp  deployment/assets/consumer_public.pem  deployment/assets/provider_public.pem
-```
-
-Now comes the hacky part, reader discretion is advised.
-In [SecretsExtension.java](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/SecretsExtension.java)
-replace the String block for the private and public key with the contents of the newly created `*.pem` files.
-
-Clean-rebuild-restart the applications. Don't forget to [seed](#43-seeding-the-dataspace). Done.
-
-#### 9.2.2 Kubernetes deployment
+### 8.2 Regenerating participant keys for Kubernetes deployment
 
 Here, participant keys are dynamically generated by IdentityHub, so there is no need to pre-generate them. In fact,
 everytime the dataspace is re-deployed and the [seed script](#53-seed-the-dataspace) is executed, a new key pair is
 generated for each participant.
 To be extra-precise, the keys are regenerated when a new `ParticipantContext` is created.
 
-## 10. Other caveats, shortcuts and workarounds
+## 9. Other caveats, shortcuts and workarounds
 
 It must be emphasized that this is a **DEMO**, it does not come with any guarantee w.r.t. operational readiness and
 comes with a few significant shortcuts affecting security amongst other things, for the sake of simplicity. These are:
 
-### 10.1 In-memory stores in local deployment
+### 9.1 In-memory stores in local deployment
 
 When running the MVD from IntelliJ, the runtimes exclusively use in-memory stores and in-memory vaults. We opted for
 this to avoid having to either provide (and maintain) a docker-compose file for those services, or to put users through
@@ -885,9 +691,9 @@ an arduous amount of setup and configuration.
 
 The Kubernetes deployment uses both persistent storage (PostgreSQL) and secure vaults (Hashicorp Vault).
 
-### 10.2 DID resolution
+### 9.2 DID resolution
 
-#### 10.2.1 `did:web` for participants
+#### 9.2.1 `did:web` for participants
 
 Participants hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
 accessible for all other participants. For example, every participant pod in the cluster must be able to resolve a DID
@@ -897,12 +703,12 @@ _ingress URL_, but must use the _service's_ URL. A service in turn is not access
 are only resolvable from _inside_ the cluster. Unfortunately, there is no way around this, unless we put DIDs on a
 publicly resolvable CDN or webserver.
 
-#### 10.2.2 `did:web` for the dataspace issuer
+#### 9.2.2 `did:web` for the dataspace issuer
 
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
 simply hosting the dataspace issuer's DID as static file with NGINX.
 
-### 10.3 Credential Issuance
+### 9.3 Credential Issuance
 
 Even though the DCP Credential Issuance Protocol is now supported, credentials are pre-generated manually and
 distributed to the participants during deployment. Credentials are put into the stores by an extension called
@@ -931,7 +737,7 @@ curl --location 'http://localhost/consumer/cs//api/identity/v1alpha/participants
 Note that the example assumes a Kubernetes deployment. This will cause the `dataspace-issuer-service` to generate and
 deliver a credential of type `DemoCredential` to the consumer's IdentityHub.
 
-### 10.4 Default scope-to-criterion transformer
+### 9.4 Default scope-to-criterion transformer
 
 When IdentityHub receives a Presentation query, that carries an access token, it must be able to convert a scope string
 into a filter expression, for example `org.eclipse.edc.vc.type:DataProcessorCredential:read` is converted into
