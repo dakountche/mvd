@@ -37,8 +37,8 @@ resource "kubernetes_deployment" "identityhub" {
 
       spec {
         container {
-          image_pull_policy = "Never"
-          image             = "identity-hub:latest"
+          image_pull_policy = "Always"
+          image             = "damadouk/identity-hub:latest"
           name              = "identity-hub"
 
           env_from {

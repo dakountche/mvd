@@ -44,8 +44,8 @@ resource "kubernetes_deployment" "connector" {
       spec {
         container {
           name              = lower(var.humanReadableName)
-          image             = "catalog-server:latest"
-          image_pull_policy = "Never"
+          image             = "damadouk/catalog-server:latest"
+          image_pull_policy = "Always"
 
           env_from {
             config_map_ref {

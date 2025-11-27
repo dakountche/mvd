@@ -46,8 +46,8 @@ resource "kubernetes_deployment" "dataplane" {
       spec {
         container {
           name              = "dataplane-${lower(var.humanReadableName)}"
-          image             = "dataplane:latest"
-          image_pull_policy = "Never"
+          image             = "damadouk/dataplane:latest"
+          image_pull_policy = "Always"
 
           env_from {
             config_map_ref {

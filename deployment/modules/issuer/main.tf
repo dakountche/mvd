@@ -37,8 +37,8 @@ resource "kubernetes_deployment" "issuerservice" {
 
       spec {
         container {
-          image_pull_policy = "Never"
-          image             = "issuerservice:latest"
+          image_pull_policy = "Always"
+          image             = "damadouk/issuerservice:latest"
           name              = "issuerservice"
 
           env_from {
