@@ -232,6 +232,7 @@ This deployment works on any K8s cluster.
 
 
 # Deploy the dataspace, type 'yes' when prompted
+```shell
 cd deployment
 tofu init
 tofu apply
