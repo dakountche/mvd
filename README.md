@@ -220,47 +220,21 @@ All commands are executed from the **repository's root folder** unless stated ot
 > Since this is not a production deployment, all applications are deployed _in the same cluster_ and in the same
 > namespace, plainly for the sake of simplicity.
 
-### 4.1 Build the runtime images
+### 4.1 MVD Components Docker images
 
-```shell
-./gradlew build
-./gradlew -Ppersistence=true dockerize
-```
-
-this builds the runtime images and creates the following docker images: `controlplane:latest`, `dataplane:latest`,
-`catalog-server:latest` and `identity-hub:latest` in the local docker image cache. Note the `-Ppersistence` flag which
-puts the HashiCorp Vault module and PostgreSQL persistence modules on the runtime classpath.
-
-> This demo will not work properly, if the `-Ppersistence=true` flag is omitted!
-
+The MVD components images are built using the instructions from the upstream Eclipse project. These images are then pushed on DockerHub.
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Terraform scripts.
+
 
 ### 4.2 Create the K8S cluster
 
-After the runtime images are built, we bring up and configure the Kubernetes cluster. We are using KinD here, but this
-should work similarly well on other cluster runtimes, such as MicroK8s, K3s or Minikube. Please refer to the respective
-documentation for more information.
+This deployment works on any K8s cluster. 
 
-```shell
-# Create the cluster
-kind create cluster -n mvd --config deployment/kind.config.yaml
-
-# Load docker images into KinD
-kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest issuerservice:latest -n mvd
-
-# Deploy an NGINX ingress
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-
-# Wait for the ingress controller to become available
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=90s
 
 # Deploy the dataspace, type 'yes' when prompted
 cd deployment
-terraform init
-terraform apply
+tofu init
+tofu apply
 ```
 
 Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
