@@ -210,7 +210,6 @@ following tools are installed and readily available:
 - a POSIX compliant shell
 - Postman (to comfortably execute REST requests)
 - `openssl`, optional, but required to [regenerate keys](#91-regenerating-issuer-keys)
-- `newman` (to run Postman collections from the command line)
 - not needed, but recommended: Kubernetes monitoring tools like K9s
 
 All commands are executed from the **repository's root folder** unless stated otherwise via `cd` commands.
@@ -295,7 +294,7 @@ option seems to [mitigate this](https://github.com/corretto/corretto-21/issues/8
 try enabling the `useSVE` switch:
 
 ```
-terraform apply -var="useSVE=true"
+tofu apply -var="useSVE=true"
 ```
 
 This will add the `-XX:UseSVE=0` switch to the `JAVA_TOOL_OPTIONS` in all runtimes, enabling the Scalable Vector
