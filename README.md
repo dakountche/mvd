@@ -271,26 +271,14 @@ Once all the deployments are up-and-running, the seed script needs to be execute
 output similar to this:
 
 ```shell
-./seed-k8s.sh
 
+# Determine the IP address of the Load Balancer
+kubectl -n mvd get ingress
 
-Seed data to "provider-qna" and "provider-manufacturing"
-(node:545000) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-(node:545154) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
+# Replace the 127.0.0.1 in the seed-k8s-job.yaml with the Load Balancer IP
 
-
-Create linked assets on the Catalog Server
-(node:545270) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-
-
-Create consumer participant
-ZGlkOndlYjphbGljZS1pZGVudGl0eWh1YiUzQTcwODM6YWxpY2U=.KPHR02XRnn+uT7vrpCIu8jJUADTBHKrterGq0PZTRJgzbzvgCXINcMWM3WBraG0aV/NxdJdl3RH3cqgyt+b5Lg==
-
-Create provider participant
-ZGlkOndlYjpib2ItaWRlbnRpdHlodWIlM0E3MDgzOmJvYg==.wBgVb44W6oi3lXlmeYsH6Xt3FAVO1g295W734jivUo5PKop6fpFsdXO4vC9D4I0WvqfB/cARJ+FVjjyFSIewew==%
+# Then run the job to seed the MVD
+kubectl -n mvd apply -f seed-k8s-job.yaml
 ```
 
 _the `node` warnings are harmless and can be ignored_
