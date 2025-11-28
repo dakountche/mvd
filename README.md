@@ -204,10 +204,8 @@ lists are different between those two.
 For this section a basic understanding of Kubernetes, Docker, Gradle and Terraform is required. It is assumed that the
 following tools are installed and readily available:
 
-- Docker
 - A Kubernetes cluster
 - OpenTofu
-- JDK 17+
 - Git
 - a POSIX compliant shell
 - Postman (to comfortably execute REST requests)
@@ -226,9 +224,9 @@ The MVD components images are built using the instructions from the upstream Ecl
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Terraform scripts.
 
 
-### 4.2 Create the K8S cluster
+### 4.2 Deploy the Eclipse MVD on a k8S cluster
 
-This deployment works on any K8s cluster. 
+To deploy the MVD, the the following commands.   
 
 
 # Deploy the dataspace, type 'yes' when prompted
@@ -238,10 +236,10 @@ tofu init
 tofu apply
 ```
 
-Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
+Once OpenTofu has completed the deployment, type `kubectl get pods` and verify the output:
 
 ```shell
-❯ kubectl get pods --namespace mvd
+❯ kubectl -n mvd get pods
 NAME                                                  READY   STATUS    RESTARTS   AGE
 consumer-controlplane-5854f6f4d7-pk4lm                1/1     Running   0          24s
 consumer-dataplane-64c59668fb-w66vz                   1/1     Running   0          17s
