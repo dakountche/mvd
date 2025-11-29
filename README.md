@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-* [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
+* [Minimum Viable Dataspace](#minimum-viable-dataspace-demo)
     * [1. Introduction](#1-introduction)
     * [2. Purpose of this Demo](#2-purpose-of-this-demo)
         * [2.1 Which version should I use?](#21-which-version-should-i-use)
@@ -271,10 +271,10 @@ output similar to this:
 
 ```shell
 
-# Determine the IP address of the Load Balancer
+# Determine the IP address of the ingress
 kubectl -n mvd get ingress
 
-# Replace the 127.0.0.1 in the seed-k8s-job.yaml with the Load Balancer IP
+# Replace 127.0.0.1 in the seed-k8s-job.yaml with IP address of the ingress
 
 # Then run the job to seed the MVD
 kubectl -n mvd apply -f seed-k8s-job.yaml
