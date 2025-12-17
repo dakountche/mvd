@@ -205,10 +205,10 @@ For this section a basic understanding of Kubernetes, Docker, Gradle and Terrafo
 following tools are installed and readily available:
 
 - A Kubernetes cluster
-- OpenTofu
+- [OpenTofu](https://opentofu.org/)
 - Git
 - a POSIX compliant shell
-- Postman (to comfortably execute REST requests)
+- [Bruno](https://www.usebruno.com/) (to comfortably execute REST requests)
 - `openssl`, optional, but required to [regenerate keys](#91-regenerating-issuer-keys)
 - not needed, but recommended: Kubernetes monitoring tools like K9s
 
@@ -345,7 +345,7 @@ The following sequence must be observed:
 
 ### 6.1 Get the catalog
 
-to get the dataspace catalog across all participants, execute `ControlPlane Management/Get Cached Catalog`. Note that it
+To get the dataspace catalog across all participants, execute `ControlPlane Management/Get Cached Catalog`. Note that it
 takes a few seconds for the consumer connector to collect all entries. Watch out for a dataset entry named `asset-1`
 similar to this:
 
