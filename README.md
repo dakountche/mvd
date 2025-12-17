@@ -51,7 +51,7 @@
 
 ## 1. Introduction
 
-The Decentralized Claims Protocol defines a secure way how to participants in a dataspace can obtain, exchange and
+The Decentralized Claims Protocol defines a secure way how two participants in a dataspace can obtain, exchange and
 present credential information. In particular,
 the [DCP specification](https://github.com/eclipse-tractusx/identity-trust) defines the _Presentation Flow_, which is
 the process of requesting, presenting and verifying Verifiable Credentials and the _Credential Issuance Flow_, which is
@@ -66,7 +66,7 @@ the [IdentityHub](https://github.com/eclipse-edc/IdentityHub).
 
 ## 2. Purpose of this Demo
 
-This demo is to demonstrate how two dataspace participants can perform a credential exchange prior to a DSP message
+This demo demonstrates how two dataspace participants can perform a credential exchange prior to a DSP message
 exchange, for example requesting a catalog or negotiating a contract.
 
 It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
@@ -203,7 +203,7 @@ lists are different between those two.
 
 This installation has been tested on a GNU/Debian 13. The following pre-requisities must be fullfilled:
 
-- A Kubernetes cluster
+- [A Kubernetes cluster](https://kubernetes.io/docs/setup/)
 - [OpenTofu](https://opentofu.org/): An open-source alternative to Terraform
 - [Bruno](https://www.usebruno.com/) (to comfortably execute REST requests)
 
@@ -215,15 +215,16 @@ All commands are executed from the **repository's root folder** unless stated ot
 ### 4.1 MVD Components Docker images
 
 The MVD components images are built using the instructions from the upstream Eclipse project. These images are then pushed on DockerHub.
+
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Terraform scripts.
 
 
 ### 4.2 Deploy the Eclipse MVD on a k8S cluster
 
-To deploy the MVD, the the following commands.   
+To deploy the MVD, type the following commands.   
 
+**Deploy the dataspace, type 'yes' when prompted**
 
-# Deploy the dataspace, type 'yes' when prompted
 ```shell
 cd deployment
 tofu init
