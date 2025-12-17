@@ -201,16 +201,11 @@ lists are different between those two.
 
 ## 4. Deployment on Kubernetes 
 
-For this section a basic understanding of Kubernetes, Docker, Gradle and Terraform is required. It is assumed that the
-following tools are installed and readily available:
+This installation has been tested on a GNU/Debian 13. The following pre-requisities must be fullfilled:
 
 - A Kubernetes cluster
-- [OpenTofu](https://opentofu.org/)
-- Git
-- a POSIX compliant shell
+- [OpenTofu](https://opentofu.org/): An open-source alternative to Terraform
 - [Bruno](https://www.usebruno.com/) (to comfortably execute REST requests)
-- `openssl`, optional, but required to [regenerate keys](#91-regenerating-issuer-keys)
-- not needed, but recommended: Kubernetes monitoring tools like K9s
 
 All commands are executed from the **repository's root folder** unless stated otherwise via `cd` commands.
 
