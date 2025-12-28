@@ -17,7 +17,7 @@
         * [4.3 Seed the dataspace](#53-seed-the-dataspace)
         * [4.4 JVM crashes with `SIGILL` on ARM platforms](#54-jvm-crashes-with-sigill-on-arm-platforms)
         * [4.5 Debugging MVD in Kubernetes](#55-debugging-mvd-in-kubernetes)
-    * [5. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+    * [5. Executing REST requests using Bruno](#7-executing-rest-requests-using-postman)
         * [5.1 Get the catalog](#71-get-the-catalog)
         * [5.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
         * [5.3 Query negotiation status](#73-query-negotiation-status)
@@ -328,11 +328,11 @@ classpath. Those are generally located in the `launchers/` directory.
 Please also refer to the [official IntelliJ tutorial](https://www.jetbrains.com/help/idea/tutorial-remote-debug.html) on
 how to do remote debugging.
 
-## 6. Executing REST requests using Postman
+## 6. Executing REST requests using Bruno
 
-This demo comes with a Postman collection located in `deployment/postman`. Be aware that the collection has different
+This demo comes with a Bruno collection located in `deployment/postman`. Be aware that the collection has different
 sets of variables in different environments, "MVD local development" and "MVD K8S". These are located in the same
-directory and must be imported into Postman too.
+directory and must be imported into Bruno too.
 
 The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
 execute a data transfer.
@@ -397,7 +397,7 @@ Important: copy the `@id` value of the `odrl:hasPolicy`, we'll need that to init
 
 From the previous step we have the `odrl:hasPolicy.@id` value, that should look something like
 `bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4`. This value must now be copied
-into the `policy.@id` field of the `ControlPlane Management/Initiate Negotiation` request of the Postman collection:
+into the `policy.@id` field of the `ControlPlane Management/Initiate Negotiation` request of the Bruno collection:
 
 ```json
 //...
@@ -674,9 +674,11 @@ The [JwtSigner.java](launchers/identity-hub/src/test/java/org/eclipse/edc/demo/d
 used to re-generate and sign all credentials.
 
 Additional credentials can be requested from the dataspace issuer using the `MVD/IdentityHub/Make Credential Request`
-Postman request or by executing on a shell:
+Bruno request or by executing on a shell:
 
 ```shell
+# Replace localhost with the ingress IP address 
+
 curl --location 'http://localhost/consumer/cs//api/identity/v1alpha/participants/ZGlkOndlYjpjb25zdW1lci1pZGVudGl0eWh1YiUzQTcwODM6Y29uc3VtZXI=/credentials/request' \
 --header 'Content-Type: application/json' \
 --header 'X-Api-Key: c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=' \
