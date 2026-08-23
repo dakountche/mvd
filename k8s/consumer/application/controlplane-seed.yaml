@@ -1,0 +1,179 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed
+  namespace: consumer
+  labels:
+    app: controlplane-seed
+    platform: edcv
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.consumer.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-controlplane
+          image: curlimages/curl:latest
+          env:
+            - name: KC_HOST
+              value: "http://keycloak.mvd-common.svc.cluster.local:8080"
+            - name: ADMIN_CLIENT_ID
+              value: "admin"
+            - name: ADMIN_CLIENT_SECRET
+              value: "edc-v-admin-secret"
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              # The Management API is scope-protected. Obtain an admin token from Keycloak.
+              # CelExpression and dataplane registration require the management-api:admin scope.
+              echo "Waiting for Keycloak..."
+              until curl -sf "${KC_HOST}/realms/mvd/.well-known/openid-configuration" >/dev/null 2>&1; do
+                echo "Keycloak not ready, retrying..."; sleep 2
+              done
+              ADMIN_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "grant_type=client_credentials" \
+                -d "client_id=${ADMIN_CLIENT_ID}" \
+                -d "client_secret=${ADMIN_CLIENT_SECRET}" \
+                -d "scope=management-api:admin" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+              if [ -z "$ADMIN_TOKEN" ]; then
+                echo "Failed to get Management API token"
+                exit 1
+              fi
+
+              MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
+              post() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
+                  -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+                  -H "Content-Type: application/json" \
+                  -d "$3")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ Already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create Membership CEL Expression "
+              echo "================================================"
+
+              post "${MGMT_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "membership-cel",
+                "leftOperand": "MembershipCredential",
+                "description": "Expression for evaluating membership credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''MembershipCredential'\'')).exists(c, c.credentialSubject.exists(cs, timestamp(cs.membershipStartDate) < now))"
+              }'
+
+              echo "✓ Membership CEL Expression done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create ManufacturerCredential CEL Expression"
+              echo "================================================"
+
+              post "${MGMT_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "manufacturer-cel",
+                "leftOperand": "ManufacturerCredential",
+                "description": "Expression for evaluating manufacturer credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''ManufacturerCredential'\'')).exists(c, c.credentialSubject.exists(cs, cs.part_types == this.rightOperand))"
+              }'
+
+              echo "✓ ManufacturerCredential CEL Expression done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 3a: Register dataplane with controlplane"
+              echo "================================================"
+
+              REG_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
+              post "${REG_URL}" "PUT" '{
+                "dataplaneId": "anonymous",
+                "endpoint": "http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/dataflows",
+                "transferTypes": [ "HttpData-PULL" ],
+                "labels": [],
+                "authorization": {
+                  "type": "none"
+                }
+              }'
+            
+              echo "✓ dataplane registered with controlplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 3b: Register controlplane with dataplane"
+              echo "================================================"
+
+              REG_URL="http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/controlplanes"
+              post "${REG_URL}" "PUT" '{
+                "controlplaneId": "anonymous",
+                "endpoint": "http://controlplane.consumer.svc.cluster.local:8182/api/signaling",
+                "authorization": {
+                  "type": "none"
+                }
+              }'
+              
+              echo "✓ controlplane registered with dataplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Controlplane seeding completed successfully!"
+              echo "================================================"
+

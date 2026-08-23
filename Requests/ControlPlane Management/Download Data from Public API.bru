@@ -1,0 +1,26 @@
+meta {
+  name: Download Data from Public API
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{CONSUMER_DP}}/api/proxy/flows/{{flowId}}/data
+  body: none
+  auth: none
+}
+
+headers {
+  ~Authorization: {{accessToken}}
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
